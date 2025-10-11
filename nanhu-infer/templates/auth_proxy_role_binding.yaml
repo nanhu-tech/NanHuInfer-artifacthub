@@ -1,0 +1,19 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrolebinding
+    app.kubernetes.io/instance: nanhu-infer-controller-proxy-rolebinding
+    app.kubernetes.io/component: kube-rbac-proxy
+    app.kubernetes.io/created-by: nanhu-infer
+    app.kubernetes.io/part-of: nanhu-infer
+    app.kubernetes.io/managed-by: helm
+  name: nanhu-infer-controller-proxy-rolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: nanhu-infer-controller-proxy-role
+subjects:
+- kind: ServiceAccount
+  name: nanhu-infer-controller
+  namespace: {{ .Values.namespace }}

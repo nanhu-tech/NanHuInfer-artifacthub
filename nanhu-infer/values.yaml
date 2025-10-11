@@ -1,0 +1,16 @@
+image:
+  repository: deployinfer/nanhu-infer
+  tag: latest
+  pullPolicy: Always
+
+replicaCount: 1
+
+resources: {}
+nodeSelector: {}
+
+tolerations: {}
+
+affinity: {}
+
+name: nanhu-infer-controller
+namespace: nanhu

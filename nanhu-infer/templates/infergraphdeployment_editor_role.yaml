@@ -1,0 +1,31 @@
+# permissions for end users to edit infergraphdeployments.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: nanhu-infer-controller-editor-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: nanhu-infer
+    app.kubernetes.io/part-of: nanhu-infer
+    app.kubernetes.io/managed-by: helm
+  name: nanhu-infer-controller-editor-role
+rules:
+- apiGroups:
+  - zjnc-tech.com
+  resources:
+  - infergraphdeployments
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - zjnc-tech.com
+  resources:
+  - infergraphdeployments/status
+  verbs:
+  - get

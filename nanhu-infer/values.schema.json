@@ -1,0 +1,351 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "nanhu-infer Chart Values Schema",
+  "description": "Schema for the nanhu-infer Chart values file, used for configuration validation and Artifact Hub display",
+  "type": "object",
+  "properties": {
+    "image": {
+      "type": "object",
+      "title": "镜像配置",
+      "description": "nanhu-infer 推理服务的容器镜像参数，控制镜像拉取来源、版本和策略",
+      "required": ["repository", "tag", "pullPolicy"],
+      "properties": {
+        "repository": {
+          "type": "string",
+          "title": "镜像仓库地址",
+          "description": "存储 nanhu-infer 镜像的仓库地址（如 Docker Hub、私有仓库）",
+          "default": "deployinfer/nanhu-infer",
+          "examples": [
+            "deployinfer/nanhu-infer",
+            "your-private-registry.com/deployinfer/nanhu-infer"
+          ],
+          "pattern": "^[a-zA-Z0-9_/.-]+/[a-zA-Z0-9_.-]+$"
+        },
+        "tag": {
+          "type": "string",
+          "title": "镜像标签",
+          "description": "镜像的版本标签，此处默认使用 'latest'（生产环境建议指定固定版本，如 'v1.0.0'）",
+          "default": "latest",
+          "examples": ["latest", "v1.0.0", "v0.0.3-beta"]
+        },
+        "pullPolicy": {
+          "type": "string",
+          "title": "镜像拉取策略",
+          "description": "Kubernetes 拉取镜像的策略，'Always' 表示每次启动都重新拉取镜像",
+          "default": "Always",
+          "enum": ["Always", "IfNotPresent", "Never"],
+          "examples": ["Always", "IfNotPresent"]
+        }
+      }
+    },
+    "replicaCount": {
+      "type": "integer",
+      "title": "副本数量",
+      "description": "nanhu-infer 控制器的 Pod 副本数，控制服务的并发能力和可用性",
+      "default": 1,
+      "minimum": 1,
+      "examples": [1, 2, 3],
+      "description": "建议生产环境根据负载设置 2+ 副本，确保高可用"
+    },
+    "resources": {
+      "type": "object",
+      "title": "资源配置",
+      "description": "nanhu-infer Pod 的 CPU/内存资源限制和请求（为空表示不限制，生产环境建议配置）",
+      "default": {},
+      "properties": {
+        "limits": {
+          "type": "object",
+          "title": "资源限制",
+          "description": "Pod 可使用的最大资源（如 CPU、内存），超出会被 Kubernetes 限流或驱逐",
+          "properties": {
+            "cpu": {
+              "type": ["string", "number"],
+              "title": "CPU 限制",
+              "examples": ["2", "2000m"],
+              "description": "建议配置为 2-4（根据推理任务复杂度调整）"
+            },
+            "memory": {
+              "type": "string",
+              "title": "内存限制",
+              "examples": ["8Gi", "16Gi"],
+              "pattern": "^\\d+(Gi|Mi|Ti)$",
+              "description": "7B 模型建议配置 16Gi+，避免 OOM"
+            }
+          }
+        },
+        "requests": {
+          "type": "object",
+          "title": "资源请求",
+          "description": "Pod 启动时向 Kubernetes 请求的最小资源，确保调度到满足资源的节点",
+          "properties": {
+            "cpu": {
+              "type": ["string", "number"],
+              "title": "CPU 请求",
+              "examples": ["1", "1000m"],
+              "description": "建议为限制值的 50%-80%（如限制 2 核，请求 1 核）"
+            },
+            "memory": {
+              "type": "string",
+              "title": "内存请求",
+              "examples": ["4Gi", "8Gi"],
+              "pattern": "^\\d+(Gi|Mi|Ti)$",
+              "description": "建议为限制值的 50%-80%（如限制 16Gi，请求 8Gi）"
+            }
+          }
+        }
+      },
+      "examples": [
+        {
+          "limits": { "cpu": "2", "memory": "16Gi" },
+          "requests": { "cpu": "1", "memory": "8Gi" }
+        }
+      ]
+    },
+    "nodeSelector": {
+      "type": "object",
+      "title": "节点选择器",
+      "description": "通过 Kubernetes 节点标签选择 Pod 部署的节点（键值对格式）",
+      "default": {},
+      "additionalProperties": {
+        "type": "string"
+      },
+      "examples": [
+        { "gpu": "nvidia" },
+        { "node-role.kubernetes.io/worker": "true" }
+      ]
+    },
+    "tolerations": {
+      "type": "array",
+      "title": "容忍配置",
+      "description": "允许 Pod 调度到带有污点（Taint）的节点，用于特殊节点（如 GPU 节点）部署",
+      "default": [],
+      "items": {
+        "type": "object",
+        "title": "容忍规则",
+        "required": ["key", "operator", "effect"],
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "污点键",
+            "examples": ["node-role.kubernetes.io/gpu", "dedicated"]
+          },
+          "operator": {
+            "type": "string",
+            "title": "匹配运算符",
+            "enum": ["Equal", "Exists"],
+            "examples": ["Equal", "Exists"]
+          },
+          "value": {
+            "type": "string",
+            "title": "污点值",
+            "examples": ["nvidia", "infer"]
+          },
+          "effect": {
+            "type": "string",
+            "title": "容忍效果",
+            "enum": ["NoSchedule", "PreferNoSchedule", "NoExecute"],
+            "examples": ["NoSchedule", "PreferNoSchedule"]
+          }
+        },
+        "examples": [
+          {
+            "key": "node-role.kubernetes.io/gpu",
+            "operator": "Exists",
+            "effect": "NoSchedule"
+          }
+        ]
+      },
+      "examples": [
+        [
+          {
+            "key": "dedicated",
+            "operator": "Equal",
+            "value": "infer",
+            "effect": "NoSchedule"
+          }
+        ]
+      ]
+    },
+    "affinity": {
+      "type": "object",
+      "title": "亲和性配置",
+      "description": "控制 Pod 与节点、Pod 与 Pod 之间的调度关系（如避免同节点部署多副本）",
+      "default": {},
+      "properties": {
+        "nodeAffinity": {
+          "type": "object",
+          "title": "节点亲和性",
+          "description": "Pod 与节点标签的亲和/反亲和规则",
+          "properties": {
+            "requiredDuringSchedulingIgnoredDuringExecution": {
+              "type": "object",
+              "title": "硬节点亲和",
+              "properties": {
+                "nodeSelectorTerms": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "matchExpressions": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": ["key", "operator", "values"],
+                          "properties": {
+                            "key": { "type": "string" },
+                            "operator": { "type": "string", "enum": ["In", "NotIn", "Exists", "DoesNotExist"] },
+                            "values": { "type": "array", "items": { "type": "string" } }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "examples": [
+                {
+                  "nodeSelectorTerms": [
+                    {
+                      "matchExpressions": [
+                        {
+                          "key": "gpu",
+                          "operator": "In",
+                          "values": ["nvidia"]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            "preferredDuringSchedulingIgnoredDuringExecution": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "weight": { "type": "integer", "minimum": 1, "maximum": 100 },
+                  "preference": {
+                    "type": "object",
+                    "properties": {
+                      "matchExpressions": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": ["key", "operator", "values"],
+                          "properties": {
+                            "key": { "type": "string" },
+                            "operator": { "type": "string", "enum": ["In", "NotIn", "Exists", "DoesNotExist"] },
+                            "values": { "type": "array", "items": { "type": "string" } }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "podAntiAffinity": {
+          "type": "object",
+          "title": "Pod 反亲和性",
+          "description": "避免同类型 Pod 部署在同一节点（提升可用性）",
+          "properties": {
+            "preferredDuringSchedulingIgnoredDuringExecution": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "weight": { "type": "integer", "minimum": 1, "maximum": 100 },
+                  "podAffinityTerm": {
+                    "type": "object",
+                    "properties": {
+                      "labelSelector": {
+                        "type": "object",
+                        "properties": {
+                          "matchExpressions": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "required": ["key", "operator", "values"],
+                              "properties": {
+                                "key": { "type": "string", "examples": ["app.kubernetes.io/name"] },
+                                "operator": { "type": "string", "enum": ["In"] },
+                                "values": { "type": "array", "items": { "type": "string", "examples": ["nanhu-infer"] } }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "topologyKey": { "type": "string", "examples": ["kubernetes.io/hostname"] }
+                    }
+                  }
+                }
+              },
+              "examples": [
+                [
+                  {
+                    "weight": 100,
+                    "podAffinityTerm": {
+                      "labelSelector": {
+                        "matchExpressions": [
+                          {
+                            "key": "app.kubernetes.io/name",
+                            "operator": "In",
+                            "values": ["nanhu-infer"]
+                          }
+                        ]
+                      },
+                      "topologyKey": "kubernetes.io/hostname"
+                    }
+                  }
+                ]
+              ]
+            }
+          }
+        }
+      },
+      "examples": [
+        {
+          "podAntiAffinity": {
+            "preferredDuringSchedulingIgnoredDuringExecution": [
+              {
+                "weight": 100,
+                "podAffinityTerm": {
+                  "labelSelector": {
+                    "matchExpressions": [
+                      {
+                        "key": "app.kubernetes.io/name",
+                        "operator": "In",
+                        "values": ["nanhu-infer"]
+                      }
+                    ]
+                  },
+                  "topologyKey": "kubernetes.io/hostname"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "name": {
+      "type": "string",
+      "title": "控制器名称",
+      "description": "nanhu-infer 控制器的基础名称，用于生成 Pod、Service 等资源的名称前缀",
+      "default": "nanhu-infer-controller",
+      "pattern": "^[a-z0-9-]+$",
+      "examples": ["nanhu-infer-controller", "nanhu-infer-worker"]
+    },
+    "namespace": {
+      "type": "string",
+      "title": "部署命名空间",
+      "description": "nanhu-infer 控制器部署到的 Kubernetes 命名空间（需确保命名空间已存在或配置了自动创建）",
+      "default": "nanhu",
+      "pattern": "^[a-z0-9-]+$",
+      "examples": ["nanhu", "nanhu-infer", "inference-services"]
+    }
+  },
+  "required": ["image", "replicaCount", "name", "namespace"],
+  "additionalProperties": false
+}

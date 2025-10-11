@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/name: {{ include "nanhu-infer-chart.name" . }}
+    helm.sh/chart: {{ printf "%s-%s" .Chart.Name .Chart.Version }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+data:
+  config.yaml: |
+    inceptionAgent:
+      criType: "containerd-sock"
+      criAddr: "/run/containerd/containerd.sock"
+      criLogType: "containerd-log"
+      criLogAddr: "/var/log/pods"
+      agentImage: "deployinfer/nanhu-inception-agent:{{ .Values.image.tag }}"
+      heartbeatInterval: "10s"
+      controllerAddr: "nanhu-infer-controller-grpc.nanhu.svc.cluster.local:50051"
+      command: "/inception/agent"
+    # inceptionPlanner:
+    #   image: "deployinfer/nanhu-planner:{{ .Values.image.tag }}"
