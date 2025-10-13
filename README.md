@@ -2,9 +2,13 @@
 
 [NanHuInfer-artifacthub project](https://github.com/nanhu-tech/NanHuInfer-artifacthub)
 
+[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/nanhu-infer)](https://artifacthub.io/packages/search?repo=nanhu-infer)
+
 ## 一、仓库介绍
 
 本仓库是 `nanhu-infer` 系列 AI 推理服务 Helm Chart 的官方存储源，专注于为 Kubernetes 集群提供便捷、可定制的 AI 推理部署方案。支持图像识别、文本生成等多种推理任务，所有 Chart 均经过兼容性测试，适配主流 Kubernetes 版本（1.24+），可灵活应用于开发调试、测试验证及生产环境部署场景。
+
+helm artifacthub代码仓，地址为：https://artifacthub.io/packages/helm/nanhu-infer/nanhu-infer
 
 ## 二、包含的 Helm Chart 列表
 
