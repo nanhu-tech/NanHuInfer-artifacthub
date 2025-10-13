@@ -81,25 +81,25 @@ helm install nanhu-infer-test nanhu-infer/nanhu-infer --version 0.0.5
 ```
 helm install nanhu-infer-prod nanhu-infer/nanhu-infer \\
 
-&#x20; \--version 0.0.5 \\
+  --version 0.0.5 \\ helm version
 
-&#x20; \--set image.tag=v0.0.5 \                     # 推理服务镜像版本
+  --set image.tag=v0.0.5 \                     # 推理服务镜像版本
 
-&#x20; \--set model.path=/data/models/llama-2-7b \   # 容器内模型文件挂载路径
+  --set model.path=/data/models/llama-2-7b \   # 容器内模型文件挂载路径
 
-&#x20; \--set persistence.enabled=true \             # 启用持久化存储（存储模型文件）
+  --set persistence.enabled=true \             # 启用持久化存储（存储模型文件）
 
-&#x20; \--set persistence.size=50Gi \                # 持久化存储容量
+  --set persistence.size=50Gi \                # 持久化存储容量
 
-&#x20; \--set persistence.storageClass=standard \    # 指定集群中的 StorageClass
+  --set persistence.storageClass=standard \    # 指定集群中的 StorageClass
 
-&#x20; \--set resources.limits.cpu=8 \               # CPU 资源上限
+  --set resources.limits.cpu=8 \               # CPU 资源上限
 
-&#x20; \--set resources.limits.memory=32Gi \         # 内存资源上限
+  --set resources.limits.memory=32Gi \         # 内存资源上限
 
-&#x20; \--set service.type=LoadBalancer \            # 用 LoadBalancer 暴露服务（云环境适用）
+  --set service.type=LoadBalancer \            # 用 LoadBalancer 暴露服务（云环境适用）
 
-&#x20; \--set service.port=8080                      # 服务暴露端口
+  --set service.port=8080                      # 服务暴露端口
 ```
 
 **示例 2：使用自定义 values 文件安装**
@@ -137,9 +137,6 @@ kubectl get pods -l app.kubernetes.io/name=nanhu-infer
 
 kubectl get svc nanhu-infer-prod-nanhu-infer
 
-# （可选）测试推理服务接口（假设服务暴露端口 8080）
-
-curl http://\<Service-IP>:8080/health  # 健康检查接口
 ```
 
 ## 四、核心配置项说明
@@ -180,11 +177,7 @@ helm upgrade nanhu-infer-prod nanhu-infer/nanhu-infer
 
 # 方法 2：指定版本升级，并应用新配置
 
-helm upgrade nanhu-infer-prod nanhu-infer/nanhu-infer \\
-
-&#x20; \--version 0.0.2 \  # 升级到 0.0.2 版本
-
-&#x20; -f custom-values-v2.yaml  # 新的自定义配置文件
+helm upgrade nanhu-infer-prod nanhu-infer/nanhu-infer --version 0.0.2 -f custom-values-v2.yaml
 ```
 
 ### 2. 回滚到历史版本
