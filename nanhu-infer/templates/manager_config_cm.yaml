@@ -18,5 +18,5 @@ data:
       heartbeatInterval: "10s"
       controllerAddr: "nanhu-infer-controller-grpc.nanhu.svc.cluster.local:50051"
       command: "/inception/agent"
-    # inceptionPlanner:
-    #   image: "deployinfer/nanhu-planner:{{ .Values.image.tag }}"
+    inceptionPlanner:
+      image: "deployinfer/nanhu-planner:{{ .Values.image.tag }}"

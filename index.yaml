@@ -23,6 +23,15 @@ entries:
     - https://nanhu-tech.github.io/NanHuInfer-artifacthub/nanhu-infer-v0.0.5.tgz
     version: v0.0.5
   - apiVersion: v2
+    appVersion: v0.0.3
+    created: "2025-10-14T16:53:10.541474506+08:00"
+    description: A Helm chart for deploying nanhu-infer controller
+    digest: 53148b11d1607b6d271a511bcb352fa1496c7f890ea666bb9042c42a33c4c438
+    name: nanhu-infer
+    urls:
+    - https://nanhu-tech.github.io/NanHuInfer-artifacthub/nanhu-infer-v0.0.6.tgz/nanhu-infer-v0.0.6.tgz
+    version: v0.0.3
+  - apiVersion: v2
     appVersion: v0.0.1
     created: "2025-10-13T09:04:26.345625846+08:00"
     description: 面向国产推理集群的高吞吐量、低延迟推理框架 Helm Chart
@@ -43,4 +52,4 @@ entries:
     urls:
     - https://nanhu-tech.github.io/NanHuInfer-artifacthub/nanhu-infer-v0.0.1.tgz
     version: v0.0.1
-generated: "2025-10-13T09:04:26.343796844+08:00"
+generated: "2025-10-14T16:53:10.534698612+08:00"
