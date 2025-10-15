@@ -12,7 +12,7 @@
 
 | Chart 名称      | 最新版本  | 核心功能描述                                                 |
 | ------------- | ----- | ------------------------------------------------------ |
-| `nanhu-infer` | 0.0.5 | 核心推理服务部署包，包含推理引擎 Deployment、模型存储挂载、Service 网络暴露、资源弹性配置 |
+| `nanhu-infer` | 0.0.6 | 核心推理服务部署包，包含推理引擎 Deployment、模型存储挂载、Service 网络暴露、资源弹性配置 |
 
 ## 三、快速开始
 
@@ -55,7 +55,7 @@ helm show chart nanhu-infer/nanhu-infer
 
 # 查看 Chart 的默认配置项（便于自定义修改）
 
-helm show values nanhu-infer/nanhu-infer --version 0.0.5
+helm show values nanhu-infer/nanhu-infer --version 0.0.6
 ```
 
 ### 4. 安装 Chart
@@ -65,9 +65,9 @@ helm show values nanhu-infer/nanhu-infer --version 0.0.5
 
 
 ```
-# 安装 \`nanhu-infer\` Chart，指定释放名为 "nanhu-infer-test"，版本 0.0.5
+# 安装 \`nanhu-infer\` Chart，指定释放名为 "nanhu-infer-test"，版本 0.0.6
 
-helm install nanhu-infer-test nanhu-infer/nanhu-infer --version 0.0.5
+helm install nanhu-infer-test nanhu-infer/nanhu-infer --version 0.0.6
 ```
 
 #### 4.2 自定义配置安装（生产环境推荐）
@@ -81,9 +81,9 @@ helm install nanhu-infer-test nanhu-infer/nanhu-infer --version 0.0.5
 ```
 helm install nanhu-infer-prod nanhu-infer/nanhu-infer \\
 
-  --version 0.0.5 \\ helm version
+  --version 0.0.6 \\ helm version
 
-  --set image.tag=v0.0.5 \                     # 推理服务镜像版本
+  --set image.tag=v0.0.6 \                     # 推理服务镜像版本
 
   --set model.path=/data/models/llama-2-7b \   # 容器内模型文件挂载路径
 
@@ -109,7 +109,7 @@ helm install nanhu-infer-prod nanhu-infer/nanhu-infer \\
 ```
 # 1. 下载默认 values.yaml 到本地
 
-helm show values nanhu-infer/nanhu-infer --version 0.0.5 > custom-values.yaml
+helm show values nanhu-infer/nanhu-infer --version 0.0.6 > custom-values.yaml
 
 # 2. 编辑 custom-values.yaml（根据需求修改配置，如镜像地址、模型路径）
 
@@ -117,7 +117,7 @@ vim custom-values.yaml
 
 # 3. 基于自定义配置文件安装
 
-helm install nanhu-infer-prod nanhu-infer/nanhu-infer --version 0.0.5 -f custom-values.yaml
+helm install nanhu-infer-prod nanhu-infer/nanhu-infer --version 0.0.6 -f custom-values.yaml
 ```
 
 ### 5. 验证安装结果
@@ -146,7 +146,7 @@ kubectl get svc nanhu-infer-prod-nanhu-infer
 | 配置项                        | 默认值                 | 说明                                                                             |
 | -------------------------- | ------------------- | ------------------------------------------------------------------------------ |
 | `image.repository`         | `3ziye/nanhu-infer` | 推理服务镜像仓库地址                                                         |
-| `image.tag`                | `v0.0.5`            | 镜像标签（需与实际部署的应用版本匹配）                                                            |
+| `image.tag`                | `v0.0.6`            | 镜像标签（需与实际部署的应用版本匹配）                                                            |
 | `image.pullPolicy`         | `IfNotPresent`      | 镜像拉取策略（`Always`/`IfNotPresent`/`Never`）                                        |
 | `model.path`               | `/models/default`   | 容器内模型文件挂载路径（需与持久化存储的挂载路径一致）                                                    |
 | `persistence.enabled`      | `false`             | 是否启用持久化存储（生产环境建议开启，避免模型文件丢失）                                                   |
@@ -160,7 +160,7 @@ kubectl get svc nanhu-infer-prod-nanhu-infer
 
 > 完整配置项可通过
 
-`helm show values nanhu-infer/nanhu-infer --version 0.0.5`
+`helm show values nanhu-infer/nanhu-infer --version 0.0.6`
 
 查看。
 
